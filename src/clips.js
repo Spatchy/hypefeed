@@ -102,7 +102,7 @@ function cacheClips( clipsResponse ) {
   
 }
 
-// CHECK THIS WORKS!!
+// Checks cache for clips since given timestamp 
 function checkForNewClips( since ) {
   console.log("CHECKING FOR NEW CLIPS SINCE " + since);
   var fileArray = fs.readdirSync(clipsPath).reverse(); // newest first
