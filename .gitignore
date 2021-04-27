@@ -1,0 +1,5 @@
+node_modules
+caches
+secrets
+.bashrc
+.bash_logout
