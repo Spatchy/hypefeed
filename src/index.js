@@ -26,14 +26,21 @@ db.connect((err, client) => {
   io.listen(3000);
   console.log("listening on port 3000");
   
-  var latestClip = clips.getLatestClipTime();
+  var latestClip; 
+  clips.getLatestClipTime(function (result) {
+    console.log(result);
+    latestClip = result;
+  });
   
   function pollCache( ) {
     
     newClips = clips.checkForNewClips(latestClip);
     if( newClips && newClips.length ) {
       console.log("new clips found in cache");
-      latestClip = clips.getLatestClipTime();
+      clips.getLatestClipTime(function (result) {
+        console.log(result);
+        latestClip = result;
+      });
       newClips.forEach(clip => {
         io.emit("new-clip", clip); // each clip emmitted individually
       });

@@ -1,12 +1,9 @@
 const got = require('got');
 const fs = require('fs');
-const { Http2ServerRequest } = require('http2');
-const { connected } = require('process');
+const db = require('./db.js').getDB();
 
-const localPath = "/home/hypefeed/";
-const srcPath = localPath + "src/";
-const secretsPath = localPath + "secrets/";
-const cachePath = localPath + "caches/";
+const secretsPath =  "../secrets/";
+const cachePath =  "../caches/";
 const clipsPath = cachePath + "clips/";
 
 
@@ -131,8 +128,12 @@ function getLatestXClips( x ) {
   return dataArray;
 }
 
-function getLatestClipTime( ) {
-  return fs.readdirSync(clipsPath).pop().split(".json")[0];
+function getLatestClipTime(callback) {
+  db.collection('feedCache').find({}).toArray((err, result) => {
+    if (err) throw err;
+    callback(result[0].timeCached);
+  });
+  //.limit(1).timeCached); //fs.readdirSync(clipsPath).pop().split(".json")[0];
 }
 
 // Does all the API interaction and updates the cache
@@ -155,7 +156,7 @@ function go( ) {
   fetchClips(credentials["appId"], accessToken["token_string"]);
 }
 
-exports.getLatestClipTime = function ( ) { return getLatestClipTime(); }
+exports.getLatestClipTime = function ( callback ) { return getLatestClipTime(callback); }
 exports.go = function( ) {return go();}
 exports.getLatestXClips = function ( x ) { return getLatestXClips(x); }
 exports.checkForNewClips = function ( since ) { return checkForNewClips(since); }
