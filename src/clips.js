@@ -100,21 +100,12 @@ function cacheClips( clipsResponse ) {
 }
 
 // Checks cache for clips since given timestamp 
-function checkForNewClips( since ) {
+function checkForNewClips( since, callback ) {
   console.log("CHECKING FOR NEW CLIPS SINCE " + since);
-  var fileArray = fs.readdirSync(clipsPath).reverse(); // newest first
-
-  var isOldLatest = (element) => element.split(".json")[0] <= since; // finds the first element with a timestamp earlier or equal to 'since'
-  oldLatestIndex = fileArray.findIndex(isOldLatest);
-
-  var newClipNamesArray = fileArray.slice(0, oldLatestIndex);
-  var dataArray = [];
-
-  newClipNamesArray.forEach(file => {
-    dataArray.push(JSON.parse(fs.readFileSync(clipsPath + file)));
+  db.collection('feedCache').find({timeCached: {$gt: since}}).sort({timeCached: -1}).toArray((err, result) => {
+    if (err) throw err;
+    callback(result);
   });
-
-  return dataArray;
 }
 
 function getLatestXClips( x ) {
@@ -159,5 +150,5 @@ function go( ) {
 exports.getLatestClipTime = function ( callback ) { return getLatestClipTime(callback); }
 exports.go = function( ) {return go();}
 exports.getLatestXClips = function ( x ) { return getLatestXClips(x); }
-exports.checkForNewClips = function ( since ) { return checkForNewClips(since); }
+exports.checkForNewClips = function ( since, callback ) { return checkForNewClips(since, callback); }
 
