@@ -1,23 +1,23 @@
 const options = { /* ... */ };
 const io = require('socket.io')({
-    path: '/clips'
+  path: '/clips'
 });
 
 const clips = require('./clips.js');
 
 io.on('connection', function(socket) {
 
-    console.log('Client connected.');
+  console.log('Client connected.');
 
-    socket.on('get-init', (num) => {
-        socket.emit('init-response', clips.getLatestXClips(num));
-        console.log('init response sent')
-    })
+  socket.on('get-init', (num) => {
+    socket.emit('init-response', clips.getLatestXClips(num));
+    console.log('init response sent')
+  })
 
-    // Disconnect listener
-    socket.on('disconnect', function() {
-        console.log('Client disconnected.');
-    });
+  // Disconnect listener
+  socket.on('disconnect', function() {
+    console.log('Client disconnected.');
+  });
 });
 
 io.listen(3000);
@@ -26,24 +26,24 @@ console.log("listening on port 3000");
 var latestClip = clips.getLatestClipTime();
 
 function pollCache( ) {
-    
-    newClips = clips.checkForNewClips(latestClip);
-    if( newClips && newClips.length ) {
-        console.log("new clips found in cache");
-        latestClip = clips.getLatestClipTime();
-        newClips.forEach(clip => {
-            io.emit("new-clip", clip); // each clip emmitted individually
-        });
-    }
+  
+  newClips = clips.checkForNewClips(latestClip);
+  if( newClips && newClips.length ) {
+    console.log("new clips found in cache");
+    latestClip = clips.getLatestClipTime();
+    newClips.forEach(clip => {
+      io.emit("new-clip", clip); // each clip emmitted individually
+    });
+  }
 }
 
 
 setInterval( function () {
-    clips.go();
-    console.log("--------- cache updated -----------");
+  clips.go();
+  console.log("--------- cache updated -----------");
 }, 30000 );
 
 setInterval( function () { 
-    pollCache(); 
-    console.log("@@@@@@@@@ cache polled @@@@@@@@");
+  pollCache(); 
+  console.log("@@@@@@@@@ cache polled @@@@@@@@");
 }, 2000 );
