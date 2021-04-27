@@ -15,4 +15,5 @@ This is a list of platforms planned for implementation soon:
 - YouTube
 - Twitch (full implementation)
 - GitHub (pushes to public repos, pull requests)
+
 (There will be more after this, but these are the priority for now)
