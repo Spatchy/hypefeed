@@ -30,31 +30,10 @@ db.connect((err, client) => {
   clips.getLatestClipTime(function (result) {
     console.log(result);
     latestClip = result;
-  });
-  
-  function pollCache( ) {
-    
-    newClips = clips.checkForNewClips(latestClip);
-    if( newClips && newClips.length ) {
-      console.log("new clips found in cache");
-      clips.getLatestClipTime(function (result) {
-        console.log(result);
-        latestClip = result;
-      });
-      newClips.forEach(clip => {
-        io.emit("new-clip", clip); // each clip emmitted individually
-      });
-    }
-  }
-  
+  });  
   
   setInterval( function () {
     clips.go();
     console.log("--------- cache updated -----------");
   }, 30000 );
-  
-  setInterval( function () { 
-    pollCache(); 
-    console.log("@@@@@@@@@ cache polled @@@@@@@@");
-  }, 2000 );
 });
